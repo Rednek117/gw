@@ -1,0 +1,17 @@
+---
+- name: Install tools on CI
+  hosts: ci
+  become: yes
+
+  tasks:
+
+  - name: Install
+    apt:
+     name: "{{packages}}"
+    vars:
+      packages:
+       - openjdk-8-jdk
+       - ansible
+       - maven
+       - git-core
+       - wget

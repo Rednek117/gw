@@ -1,0 +1,17 @@
+[dev_tools]
+ubuntu1 ansible_host=3.120.196.114
+
+[artifactory]
+ubuntu2 ansible_host=35.157.29.181
+
+[ci]
+ubuntu3 ansible_host=3.124.107.179
+
+[docker]
+ubuntu4 ansible_host=3.124.180.167
+
+[aws_servers:children]
+dev_tools
+artifactory
+ci
+docker

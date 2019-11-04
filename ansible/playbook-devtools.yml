@@ -1,0 +1,42 @@
+---
+- name: Install tools on Devtools
+  hosts: dev_tools
+  become: yes
+
+  tasks:
+
+  - name: Install
+    apt:
+     name: "{{packages}}"
+    vars:
+      packages:
+       - openjdk-8-jdk
+       - ansible
+       - maven
+       - git-core
+       - wget
+
+  - name: Add Jenkins apt rep key
+    apt_key:
+       url: "https://pkg.jenkins.io/debian/jenkins.io.key"
+       state: present
+
+  - name: Add Jenkins apt rep
+    apt_repository:
+        repo: 'deb http://pkg.jenkins.io/debian-stable binary/'
+        state: present
+        update_cache: true
+  - name: Install jenkins
+    apt:
+      name: jenkins
+      state: present
+
+
+  - name: start
+    service:
+      name: jenkins
+      state: started
+  - name: Get pass
+    become: yes
+    become_method: sudo
+    command: cat /var/lib/jenkins/secrets/initialAdminPassword

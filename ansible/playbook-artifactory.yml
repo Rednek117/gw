@@ -1,0 +1,30 @@
+---
+- name: Install programs on Artifactory
+  hosts: artifactory
+  become: yes
+
+  tasks:
+
+
+  - name: Install Docker
+    apt:
+      name: docker.io
+
+  - shell: sudo fallocate -l 2G /swapfile
+  - shell: sudo chmod 600 /swapfile
+  - shell: sudo mkswap /swapfile
+  - shell: sudo swapon /swapfile
+  - shell: sudo echo "/swapfile swap swap defaults 0 0" >> /etc/fstab
+  - shell: sudo docker pull docker.bintray.io/jfrog/artifactory-cpp-ce
+  - shell: sudo mkdir -p /jfrog/artifactory
+  - shell: sudo chown -R 1030 /jfrog/
+  - shell: sudo docker run --name artifactory -d -p 8081:8081 \
+      -v /jfrog/artifactory:/var/opt/jfrog/artifactory \
+      docker.bintray.io/jfrog/artifactory-oss:latest
+  - name: copy upstart script
+    template:
+      src: cmd.txt
+      dest: "/etc/systemd/system/artifactory.service"
+  - shell: sudo systemctl daemon-reload
+  - shell: sudo systemctl start artifactory
+  - shell: sudo systemctl enable artifactory
